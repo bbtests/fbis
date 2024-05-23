@@ -23,13 +23,16 @@ class VendingController extends Controller
                 'amount.regex' => ':attribute has max of two digits after the decimal point.',
             ]);
         try {
-            $product = Product::where('name', $validated['network'])->first();
-            $user = auth()->user();
-            $wallet = $user->wallet;
-            if (bcsub($wallet->balance, $validated['amount'], 3) < 0.0001) {
-                return $this->failed([], 'Insufficient user balance', Response::HTTP_FORBIDDEN);
-            }
-            return \DB::transaction(function () use ($validated, $product, $user, $wallet) {
+            return \DB::transaction(function () use ($validated) {
+                $product = Product::where('name', $validated['network'])->first();
+                $user = auth()->user();
+                if (!$user) {
+                    return $this->failed([], 'user not found', Response::HTTP_FORBIDDEN);
+                }
+                $wallet = $user->wallet->lockForUpdate()->first();
+                if (bcsub($wallet->balance, $validated['amount'], 3) < 0.0001) {
+                    return $this->failed([], 'Insufficient user balance', Response::HTTP_FORBIDDEN);
+                }
                 $transaction = Transaction::create([
                     'product_id' => $product->id,
                     'user_id' => $user->id,
