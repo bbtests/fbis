@@ -22,7 +22,6 @@ class VendingController extends Controller
             [
                 'amount.regex' => ':attribute has max of two digits after the decimal point.',
             ]);
-
         try {
             $product = Product::where('name', $validated['network'])->first();
             $user = auth()->user();
@@ -30,18 +29,16 @@ class VendingController extends Controller
             if (bcsub($wallet->balance, $validated['amount'], 3) < 0.0001) {
                 return $this->failed([], 'Insufficient user balance', Response::HTTP_FORBIDDEN);
             }
-            $transaction = Transaction::create([
-                'product_id' => $product->id,
-                'user_id' => $user->id,
-                'amount' => $validated['amount'],
-            ]);
-
-            $validated['transaction_id'] = $transaction->id;
-            $vendingDetails = VendingService::getActiveVendingService()->vend($validated);
-            $is_successful = false;
-            \DB::transaction(function () use ($validated, $product, $wallet, $transaction, $vendingDetails, &$is_successful) {
-                $commission = $product->commission_rate * $validated['amount'];
+            return \DB::transaction(function () use ($validated, $product, $user, $wallet) {
+                $transaction = Transaction::create([
+                    'product_id' => $product->id,
+                    'user_id' => $user->id,
+                    'amount' => $validated['amount'],
+                ]);
+                $validated['transaction_id'] = $transaction->id;
+                $vendingDetails = VendingService::getActiveVendingService()->vend($validated);
                 $is_successful = $vendingDetails['code'] == 200;
+                $commission = $product->commission_rate * $validated['amount'];
                 $transaction->update([
                     'commission' => $commission,
                     'is_successful' => $is_successful,
@@ -51,12 +48,12 @@ class VendingController extends Controller
                     $wallet->balance -= ($validated['amount'] + $commission);
                     $wallet->save();
                 }
+                return $is_successful
+                ?
+                $this->success([
+                    'transaction' => $transaction], 'Product vended successfully')
+                : $this->failed([], $transaction['details']['message'] ?? 'Vending failed. Please try again later.');
             });
-            return $is_successful
-            ?
-            $this->success([
-                'transaction' => $transaction], 'Product vended successfully')
-            : $this->failed([], $transaction['details']['message'] ?? 'Vending failed. Please try again later.');
         } catch (\Exception $e) {
             \Log::error('Vending failed: ' . $e->getMessage());
             return $this->error([], 'Vending failed. Please try again later.', Response::HTTP_INTERNAL_SERVER_ERROR);
