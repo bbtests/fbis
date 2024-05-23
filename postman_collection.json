@@ -1,0 +1,435 @@
+{
+	"info": {
+		"_postman_id": "d7c47f19-8b5f-4cd7-bd9e-eed0cf594870",
+		"name": "FBIS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "14901487",
+		"_collection_link": "https://bbtests.postman.co/workspace/My-Workspace~7b7550ef-905d-4479-8c44-8d67a5bda851/collection/14901487-d7c47f19-8b5f-4cd7-bd9e-eed0cf594870?action=share&source=collection_link&creator=14901487"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "setting",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}/settings/:id",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"settings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "settings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": "{{API_URL}}/settings"
+					},
+					"response": []
+				},
+				{
+					"name": "setting",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"notification\",\n    \"value\": false,\n    \"description\": \"Should notification service be used?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{API_URL}}/settings"
+					},
+					"response": []
+				},
+				{
+					"name": "setting",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"user_verification\",\n    \"value\": true,\n    \"description\": \"Should user be verified before login?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/settings/:id",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"settings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setting",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}/settings/:id",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"settings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"superadmin@fbis.com\",\n    \"password\": \"Adewale@123\",\n    \"device_name\":\"ios\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{API_URL}}/login"
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": {
+					"token": "1|sRYogYFfZIb9rX0mKojpcYmmFM0ReUkwSOJp1V9n4bd3dd1e"
+				}
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ehinmitankehinde@gmail.com\",\n    \"password\": \"Adewale@123\",\n    \"device_name\":\"ios\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{API_URL}}/login"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"Adewale@123\",\n    \"device_name\":\"ios\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{API_URL}}/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Kehinde Odun\",\n    \"email\": \"ehinmitankehinde@gmail.com\",\n    \"phone\": \"08127208187\",\n    \"password\": \"Adewale@123\",\n    \"password_confirmation\": \"Adewale@123\",\n    \"device_name\": \"ios\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{API_URL}}/register"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "External",
+			"item": [
+				{
+					"name": "BAP airtime",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"value": "T7Wi2Q7tHFkq6sxU5WaUSBIGg3ynb96Qi74RnAeY6ys="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone\": \"07034953306\",\n    \"amount\": 100,\n    \"service_type\": \"GLO\",\n    \"plan\": \"prepaid\",\n    \"agentId\": \"204\",\n   \"agentReference\": \"slksdklska12328\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://api.staging.baxibap.com/services/airtime/request"
+					},
+					"response": []
+				},
+				{
+					"name": "BAP airtime providers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"value": "T7Wi2Q7tHFkq6sxU5WaUSBIGg3ynb96Qi74RnAeY6ys="
+							}
+						],
+						"url": "https://api.staging.baxibap.com/services/airtime/providers"
+					},
+					"response": []
+				},
+				{
+					"name": "Shago airtime",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "hashKey",
+								"value": "c1df88d180d0163fc53f4efde6288a2c87a2ceaaefae0685fd4a8c01b217e70d"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceCode\" : \"QAB\",\n    \"phone\" : \"07035666498\",\n    \"amount\": \"50\",\n    \"vend_type\" : \"VTU \",\n    \"network\": \"MTN\",\n    \"request_id\": \"66666629227706\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://test.shagopayments.com/public/api/test/b2b"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Home",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": "{{API_URL}}"
+			},
+			"response": []
+		},
+		{
+			"name": "vend",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"phone\": \"08127208187\",\n    \"amount\": 50,\n    \"network\": \"MTN\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{API_URL}}/vend"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "2|v7omfXbOuPJuZaQQ2VN9U8OYVuEcCGOLfksyTLbj86847ad4"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "API_URL",
+			"value": "{{BASE_URL}}/api",
+			"type": "string"
+		}
+	]
+}
