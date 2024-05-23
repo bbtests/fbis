@@ -33,7 +33,7 @@ class BAP implements VendingPartnerInterface
         $response = Http::withHeaders([
             'x-api-key' => $this->partner['api_key'],
             'Accept' => 'application/json',
-        ])->timeout(5)->post($this->url, $payload)->json();
+        ])->timeout(10)->post($this->url, $payload)->json();
         if ($response['code'] == 200) {
             return $this->success($response);
         } else {

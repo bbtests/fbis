@@ -36,3 +36,5 @@ Also at:
 
 for `BAP_API_*` values, check `https://documenter.getpostman.com/view/25151909/2sA3JKc29C`
 for `SHAGO_API_*` values, check `https://documenter.getpostman.com/view/19961344/2sA3JKc1qV`
+
+NB: BAP gives `Insufficient balance` when agent balance is low while `Insufficient user balance` when application user balance is low.

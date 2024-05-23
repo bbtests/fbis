@@ -15,17 +15,20 @@ class VendingController extends Controller
     public function vend(Request $request)
     {
         $validated = $request->validate([
-            'amount' => 'numeric|required',
+            'amount' => 'numeric|required|between:1,100000|regex:/^\d+(\.\d{1,2})?$/',
             'phone' => 'required|digits:11',
             'network' => 'required|exists:products,name',
-        ]);
+        ],
+            [
+                'amount.regex' => ':attribute has max of two digits after the decimal point.',
+            ]);
 
         try {
             $product = Product::where('name', $validated['network'])->first();
             $user = auth()->user();
             $wallet = $user->wallet;
-            if ($wallet->balance < $validated['amount']) {
-                return $this->failed([], 'Insufficient balance', Response::HTTP_FORBIDDEN);
+            if (bcsub($wallet->balance, $validated['amount'], 3) < 0.0001) {
+                return $this->failed([], 'Insufficient user balance', Response::HTTP_FORBIDDEN);
             }
             $transaction = Transaction::create([
                 'product_id' => $product->id,

@@ -32,7 +32,7 @@ class SHAGO implements VendingPartnerInterface
         $response = Http::withHeaders([
             'hashKey' => $this->partner['api_key'],
             'Accept' => 'application/json',
-        ])->timeout(5)->post($this->url, $payload)->json();
+        ])->timeout(10)->post($this->url, $payload)->json();
         if ($response['status'] == 200) {
             return $this->success($response);
         } else {
