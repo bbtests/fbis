@@ -1,32 +1,30 @@
-FBIS  TEST
+# FBIS  TEST
 
-# EASY SETUP
+## EASY SETUP
 
 Clone the repository `git clone https://github.com/bbtests/fbis`
 
-## Open the project directory in terminal
+### Open the project directory in terminal
 
-rename .env.example to  .env and update the  details:
+copy .env.example to  .env and update the  details:
      `cp .env.example .env`
 
-### Using Sail(for docker)
-
-#### Prequisite: php8.2+ and composer
+#### Using Sail (docker), php8.2+ and composer required
 
 Install packages and run:
     `composer install && ./vendor/bin/sail up -d`
 
-### Using docker
+#### Using Docker
 
 run:
     `docker compose up -d`
 
-### Getting Started
+#### Getting Started
 
-run migration & seeding  default configuration(It should be run only once)
+run migration & seeding default configuration in the app container terminal (Only once)
     `php artisan migrate:fresh --seed && php artisan key:generate`
 
-# API Documentation
+## API Documentation
 
 import `postman_collection.json` into postman to see the API documentation
 
