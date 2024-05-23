@@ -16,7 +16,7 @@ class VendingController extends Controller
     {
         $validated = $request->validate([
             'amount' => 'numeric|required',
-            'phone' => 'required',
+            'phone' => 'required|digits:11',
             'network' => 'required|exists:products,name',
         ]);
 
