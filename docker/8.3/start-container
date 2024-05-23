@@ -13,6 +13,12 @@ if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
 
+if [ ! -d ./vendor ]; then
+    echo "Installing packages"
+    composer install
+    echo "Done installing packages"
+fi
+
 chmod -R ugo+rw /.composer
 
 if [ $# -gt 0 ]; then
