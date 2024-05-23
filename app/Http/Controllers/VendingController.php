@@ -15,7 +15,7 @@ class VendingController extends Controller
     public function vend(Request $request)
     {
         $validated = $request->validate([
-            'amount' => 'required',
+            'amount' => 'numeric|required',
             'phone' => 'required',
             'network' => 'required|exists:products,name',
         ]);
@@ -27,7 +27,6 @@ class VendingController extends Controller
             if ($wallet->balance < $validated['amount']) {
                 return $this->failed([], 'Insufficient balance', Response::HTTP_FORBIDDEN);
             }
-
             $transaction = Transaction::create([
                 'product_id' => $product->id,
                 'user_id' => $user->id,
@@ -36,23 +35,28 @@ class VendingController extends Controller
 
             $validated['transaction_id'] = $transaction->id;
             $vendingDetails = VendingService::getActiveVendingService()->vend($validated);
-            // dd($vendingDetails);
-
-            \DB::transaction(function () use ($validated, $product, $wallet, $transaction) {
+            $is_successful = false;
+            \DB::transaction(function () use ($validated, $product, $wallet, $transaction, $vendingDetails, &$is_successful) {
                 $commission = $product->commission_rate * $validated['amount'];
-                $transaction->commission = $commission;
-                $transaction->save();
-                $wallet->balance -= $validated['amount'];
-                $wallet->balance += $commission;
-                $wallet->save();
+                $is_successful = $vendingDetails['code'] == 200;
+                $transaction->update([
+                    'commission' => $commission,
+                    'is_successful' => $is_successful,
+                    'details' => $vendingDetails['data'],
+                ]);
+                if ($is_successful) {
+                    $wallet->balance -= ($validated['amount'] + $commission);
+                    $wallet->save();
+                }
             });
-            return response()->json([
-                'message' => 'Product vended successfully',
-                'transaction' => $transaction,
-            ]);
+            return $is_successful
+            ?
+            $this->success([
+                'transaction' => $transaction], 'Product vended successfully')
+            : $this->failed([], $transaction['details']['message'] ?? 'Vending failed. Please try again later.');
         } catch (\Exception $e) {
             \Log::error('Vending failed: ' . $e->getMessage());
-            return $this->failed([], 'Vending failed. Please try again later.', Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->error([], 'Vending failed. Please try again later.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

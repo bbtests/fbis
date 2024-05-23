@@ -4,6 +4,7 @@ namespace App\Services\Vending\Partners;
 
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response;
 
 class SHAGO implements VendingPartnerInterface
 {
@@ -26,16 +27,16 @@ class SHAGO implements VendingPartnerInterface
             'amount' => $data['amount'],
             'network' => strtolower($data['network']),
             'phone' => $data['phone'],
-            'request_id' => config('app.name') . '-' . $data['transaction_id'],
+            'request_id' => config('app.name') . '-' . \Hash::make($data['transaction_id']),
         ];
         $response = Http::withHeaders([
             'hashKey' => $this->partner['api_key'],
             'Accept' => 'application/json',
-        ])->timeout(5)->post($this->url, $payload);
-        if ($response->successful()) {
-            return $this->success($response->json());
+        ])->timeout(5)->post($this->url, $payload)->json();
+        if ($response['status'] == 200) {
+            return $this->success($response);
         } else {
-            return $this->failed($response->json(), 'Request failed', $response->status());
+            return $this->failed($response, 'Request failed', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 }

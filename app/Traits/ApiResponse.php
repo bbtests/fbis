@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-// use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,7 +11,7 @@ namespace App\Traits;
 |
 | This trait will be used for any response we sent to clients.
 |
-*/
+ */
 
 trait ApiResponse
 {
@@ -23,16 +23,16 @@ trait ApiResponse
      * @param  int $code
      * @return array
      */
-    protected function success($data = [], string $message = "", int $code = 200)
+    protected function success($data = [], string $message = "", int $code = Response::HTTP_OK)
     {
         return $this->res('SUCCESS', $message, $data, $code);
     }
-    protected function failed($data = [], string $message = "", int $code = 204)
+    protected function failed($data = [], string $message = "", int $code = Response::HTTP_UNPROCESSABLE_ENTITY)
     {
         return $this->res('FAILED', $message, $data, $code);
     }
 
-    protected function error($data = [], string $message = "", int $code = 400)
+    protected function error($data = [], string $message = "", int $code = Response::HTTP_BAD_REQUEST)
     {
         return $this->res('ERROR', $message, $data, $code);
     }
@@ -43,7 +43,7 @@ trait ApiResponse
             'status' => $type,
             'message' => $message,
             'code' => $code,
-            'data' => $data
+            'data' => $data,
         ];
     }
 }

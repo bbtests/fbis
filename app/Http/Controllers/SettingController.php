@@ -5,15 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSettingRequest;
 use App\Http\Requests\UpdateSettingRequest;
 use App\Models\Setting;
+use App\Traits\ApiResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SettingController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Setting::all();
+        try {
+            return $this->success(['settings' => Setting::all()]);
+        } catch (\Throwable $th) {
+            return $this->failed([], $th->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 
     /**
@@ -25,8 +32,12 @@ class SettingController extends Controller
             'key' => 'required|unique:settings',
             'value' => 'required',
         ]);
-
-        return Setting::create($validated);
+        try {
+            $setting = Setting::create($validated);
+            return $this->success(['setting' => $setting]);
+        } catch (\Throwable $th) {
+            return $this->failed([], $th->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 
     /**
@@ -34,20 +45,31 @@ class SettingController extends Controller
      */
     public function show(Setting $setting)
     {
-        return $setting->first();
+        try {
+            return $this->success(['setting' => $setting->first()]);
+        } catch (\Throwable $th) {
+            return $this->failed([], $th->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSettingRequest $request, Setting $setting)
+    public function update(UpdateSettingRequest $request, $id)
     {
         $validated = $request->validate([
             'key' => 'sometimes|required',
             'value' => 'sometimes|required',
         ]);
-        $setting->update($validated);
-        return $setting;
+        try {
+            if ($setting = Setting::find($id)) {
+                $setting->update($validated);
+                return $this->success(['setting' => $setting]);
+            }
+            return $this->failed([], 'Setting not found', Response::HTTP_NOT_FOUND);
+        } catch (\Throwable $th) {
+            return $this->failed([], $th->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 
     /**
@@ -55,6 +77,13 @@ class SettingController extends Controller
      */
     public function destroy($id)
     {
-        return Setting::destroy($id);
+        try {
+            if (!!Setting::destroy($id)) {
+                return $this->success([]);
+            }
+            return $this->failed([], 'Setting not found', Response::HTTP_NOT_FOUND);
+        } catch (\Throwable $th) {
+            return $this->failed([], $th->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 }

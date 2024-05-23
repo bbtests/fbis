@@ -4,6 +4,7 @@ namespace App\Services\Vending\Partners;
 
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response;
 
 class BAP implements VendingPartnerInterface
 {
@@ -23,7 +24,7 @@ class BAP implements VendingPartnerInterface
         $payload = [
             'agentId' => $partner['specifics']['agent_id'],
             'plan' => $partner['specifics']['plans'][0],
-            'agentReference' => config('app.name') . '-' . $data['transaction_id'],
+            'agentReference' => config('app.name') . '-' . \Hash::make($data['transaction_id']),
             'amount' => $data['amount'],
             'phone' => $data['phone'],
             'service_type' => strtoupper($data['network']),
@@ -32,11 +33,11 @@ class BAP implements VendingPartnerInterface
         $response = Http::withHeaders([
             'x-api-key' => $this->partner['api_key'],
             'Accept' => 'application/json',
-        ])->timeout(5)->post($this->url, $payload);
-        if ($response->successful()) {
-            return $this->success($response->json());
+        ])->timeout(5)->post($this->url, $payload)->json();
+        if ($response['code'] == 200) {
+            return $this->success($response);
         } else {
-            return $this->failed($response->json(), 'Request failed', $response->status());
+            return $this->failed($response, $response['message'] ?? 'Request failed', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 }
